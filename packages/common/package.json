@@ -1,0 +1,16 @@
+{
+  "name": "@nutrition/common",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p ."
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.23.0",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}
