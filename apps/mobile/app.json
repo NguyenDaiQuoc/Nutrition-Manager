@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "Nutrition Mobile",
+    "slug": "nutrition-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "nutritionmobile",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nutrition.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.nutrition.mobile"
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Ứng dụng cần quyền truy cập máy ảnh để chụp ảnh món ăn và nguyên liệu dinh dưỡng."
+        }
+      ],
+      "expo-file-system"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "nutrition-mobile-project"
+      }
+    }
+  }
+}

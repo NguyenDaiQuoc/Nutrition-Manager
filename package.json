@@ -1,5 +1,36 @@
 {
+  "name": "nutrition-manager",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:mobile": "npm run start --workspace=apps/mobile",
+    "dev:all": "concurrently \"npm run dev:web\" \"npm run dev:mobile\"",
+    "build:web": "npm run build --workspace=apps/web",
+    "lint:web": "npm run lint --workspace=apps/web",
+    "clean": "rimraf node_modules apps/*/node_modules packages/*/node_modules",
+    "install:all": "npm install --workspaces"
+  },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1"
+    "@google/generative-ai": "^0.24.1",
+    "expo-camera": "~17.0.8",
+    "next": "^15.5.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.4",
+    "react-native-gesture-handler": "^2.28.0",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-navigation": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "concurrently": "^9.2.1",
+    "rimraf": "^5.0.5",
+    "typescript": "~5.9.2"
   }
 }
