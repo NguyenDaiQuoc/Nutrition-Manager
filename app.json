@@ -1,0 +1,8 @@
+{
+  "plugins": [
+    "expo-health-connect",
+    "react-native-health",
+    "expo-web-browser",
+    "expo-font"
+  ]
+}
