@@ -5,7 +5,7 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Chào mừng đến Nutrition Manager 🍎</Text>
-      <Button title="Mở Camera" onPress={() => navigation.navigate('Camera')} />
+      {/* <Button title="Mở Camera" onPress={() => navigation.navigate('Camera')} /> */}
     </View>
   );
 }
