@@ -2,7 +2,7 @@
   "name": "nutrition-manager",
   "version": "0.1.0",
   "private": true,
-  "main": "App.js",
+  "main": "App.tsx",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -15,6 +15,7 @@
     "expo": "^54.0.13",
     "expo-camera": "~17.0.8",
     "expo-file-system": "~19.0.17",
+    "lottie-react-native": "^5.1.4",
     "react": "19.1.0",
     "react-native": "0.81.4"
   }
