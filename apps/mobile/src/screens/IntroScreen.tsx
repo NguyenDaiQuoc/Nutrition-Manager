@@ -66,7 +66,7 @@ export default function IntroScreen() {
     if (currentIndex < slides.length - 1) {
       scrollViewRef.current?.scrollTo({ x: width * (currentIndex + 1), animated: true });
     } else {
-      navigation.navigate('Home'); // hoặc 'Home'
+      navigation.navigate('Auth'); // hoặc 'Home'
     }
   };
 

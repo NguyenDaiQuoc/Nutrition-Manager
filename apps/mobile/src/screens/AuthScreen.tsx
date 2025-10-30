@@ -87,7 +87,7 @@ export default function AuthScreen() {
             } else {
                 await signInWithEmailAndPassword(auth, email, password);
                 // Đăng nhập thành công, chuyển hướng
-                navigation.navigate('Intro'); 
+                navigation.navigate('Home'); 
             }
         } catch (error: any) {
             console.log(error);
