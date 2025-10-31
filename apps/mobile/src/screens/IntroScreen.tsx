@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,11 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const slides = [
   {
@@ -56,53 +57,112 @@ export default function IntroScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const navigation = useNavigation();
+  const lottieRefs = useRef<(LottieView | null)[]>([]);
 
-  const handleScroll = (event: any) => {
+  // 🔹 Kiểm tra nếu đã xem intro hoặc đã đăng nhập thì bỏ qua
+  // useEffect(() => {
+  //   const checkIfSeen = async () => {
+  //     try {
+  //       const seen = await AsyncStorage.getItem('intro_seen');
+  //       const loggedIn = await AsyncStorage.getItem('user_token');
+  //       if (seen === 'true' || loggedIn) {
+  //         navigation.reset({
+  //           index: 0,
+  //           routes: [{ name: 'Home' }],
+  //           // hoặc 'Auth'
+  //         });
+  //       }
+  //     } catch (e) {
+  //       console.log('Error checking intro status:', e);
+  //     }
+  //   };
+  //   checkIfSeen();
+  // }, []);
+
+  const handleMomentumScrollEnd = (event: any) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / width);
     setCurrentIndex(index);
   };
 
-  const handleNext = () => {
+  useEffect(() => {
+    lottieRefs.current.forEach((ref, i) => {
+      if (ref) {
+        if (i === currentIndex) ref.play();
+        else ref.pause();
+      }
+    });
+  }, [currentIndex]);
+
+  const handleNext = async () => {
     if (currentIndex < slides.length - 1) {
-      scrollViewRef.current?.scrollTo({ x: width * (currentIndex + 1), animated: true });
+      scrollViewRef.current?.scrollTo({
+        x: width * (currentIndex + 1),
+        animated: true,
+      });
     } else {
-      navigation.navigate('Auth'); // hoặc 'Home'
+      await AsyncStorage.setItem('intro_seen', 'true');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Auth' }],
+      });
     }
+  };
+
+  const handleSkip = async () => {
+    await AsyncStorage.setItem('intro_seen', 'true');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Auth' }],
+    });
   };
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+        <Text style={styles.skipText}>Bỏ qua</Text>
+      </TouchableOpacity>
+
       <Animated.ScrollView
         ref={scrollViewRef}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
-          useNativeDriver: false,
-          listener: handleScroll,
-        })}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: false }
+        )}
         scrollEventThrottle={16}
+        decelerationRate="fast"
+        snapToInterval={width}
+        snapToAlignment="center"
+        contentContainerStyle={{ alignItems: 'center' }}
       >
-        {slides.map((item) => (
-          <View key={item.id} style={styles.slide}>
-            <LottieView
-              source={item.animation}
-              autoPlay
-              loop
-              style={styles.animation}
-            />
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.description}>{item.description}</Text>
+        {slides.map((item, index) => (
+          <View key={item.id} style={[styles.slide, { width }]}>
+            <View style={styles.animationWrapper}>
+              <LottieView
+                ref={(ref) => (lottieRefs.current[index] = ref)}
+                source={item.animation}
+                loop
+                style={styles.animation}
+                resizeMode="contain"
+                autoPlay={index === 0}
+              />
+            </View>
+            <View style={styles.textWrapper}>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.description}>{item.description}</Text>
+            </View>
           </View>
         ))}
       </Animated.ScrollView>
 
-      {/* Step bar indicator */}
       <View style={styles.indicatorContainer}>
         {slides.map((_, i) => {
           const scale = scrollX.interpolate({
             inputRange: [(i - 1) * width, i * width, (i + 1) * width],
-            outputRange: [0.8, 1.2, 0.8],
+            outputRange: [0.8, 1.3, 0.8],
             extrapolate: 'clamp',
           });
           return (
@@ -112,8 +172,7 @@ export default function IntroScreen() {
                 styles.dot,
                 {
                   transform: [{ scale }],
-                  opacity: i === currentIndex ? 1 : 0.4,
-                  backgroundColor: i === currentIndex ? '#4CAF50' : '#BDBDBD',
+                  backgroundColor: i === currentIndex ? '#4CAF50' : '#CFCFCF',
                 },
               ]}
             />
@@ -138,21 +197,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   slide: {
-    width,
-    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  animationWrapper: {
+    width: width * 0.9,
+    height: height * 0.35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden', // 👈 chặn tràn ra ngoài slide
   },
   animation: {
+    width: '100%',
+    height: '100%',
+  },
+  textWrapper: {
     width: width * 0.8,
-    height: 280,
+    alignItems: 'center',
+    marginTop: 30,
   },
   title: {
     fontSize: 24,
     fontWeight: '700',
     color: '#2C2C2C',
     textAlign: 'center',
-    marginTop: 30,
   },
   description: {
     fontSize: 16,
@@ -160,12 +228,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
     lineHeight: 22,
-    paddingHorizontal: 10,
   },
   indicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 25,
+    marginVertical: 15,
   },
   dot: {
     width: 10,
@@ -184,6 +251,17 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: '600',
+  },
+  skipButton: {
+    position: 'absolute',
+    top: 55,
+    right: 20,
+    zIndex: 10,
+  },
+  skipText: {
+    fontSize: 15,
+    color: '#4CAF50',
     fontWeight: '600',
   },
 });

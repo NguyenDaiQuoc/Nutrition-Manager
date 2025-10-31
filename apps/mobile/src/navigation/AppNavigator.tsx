@@ -5,11 +5,15 @@ import AuthScreen from '../screens/AuthScreen';
 import CameraScreen from '../screens/CameraScreen';
 import HealthScreen from '../screens/HealthScreen';
 import IntroScreen from '../screens/IntroScreen';
+import TermsScreen from "../screens/TermsOfUseScreen";
+import PolicyScreen from "../screens/PrivacyPolicyScreen";
+
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import BlogScreen from '../screens/BlogScreen';
 import ScanScreen from '../screens/ScanScreen';
 import RecipesScreen from '../screens/RecipesScreen';
+import TestLottieScreen from "../screens/TestLottieScreen";
 import MainTabNavigator from './MainTabNavigator'; // 👈 thay vì HomeScreen
 
 export type RootStackParamList = {
@@ -23,6 +27,9 @@ export type RootStackParamList = {
   Blog: undefined;
   Scan: undefined;
   Recipes: undefined;
+  TestLottie: undefined;
+  Terms: undefined;
+  Policy: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -41,8 +48,12 @@ export default function AppNavigator() {
         <Stack.Screen name="Splash" component={SplashScreen} />
       ) : (
         <>
+          {/* <Stack.Screen name="TestLottie" component={TestLottieScreen} /> */}
           <Stack.Screen name="Intro" component={IntroScreen} />
           <Stack.Screen name="Auth" component={AuthScreen} />
+          <Stack.Screen name="Terms" component={TermsScreen} />
+          <Stack.Screen name="Policy" component={PolicyScreen} />
+
           {/* 👇 Thay HomeScreen bằng MainTabNavigator */}
           <Stack.Screen name="Home" component={MainTabNavigator} />
           <Stack.Screen name="Camera" component={CameraScreen} />

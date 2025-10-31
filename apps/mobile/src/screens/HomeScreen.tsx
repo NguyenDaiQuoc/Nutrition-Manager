@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const [search, setSearch] = useState("");
@@ -92,10 +93,10 @@ export default function HomeScreen() {
               key={i}
               onPress={() => setWater((prev) => Math.min(totalWater, prev + totalWater / maxGlasses))}
             >
-              <Ionicons
-                name={i < water / (totalWater / maxGlasses) ? "cup" : "add-outline"}
+              <MaterialCommunityIcons
+                name={i < water / (totalWater / maxGlasses) ? "cup" : "cup-outline"}
                 size={28}
-                color={i < water / (totalWater / maxGlasses) ? "#6ee7b7" : "#555"}
+                color={i < water / (totalWater / maxGlasses) ? "#43b0e2ff" : "#555"}
                 style={{ marginHorizontal: 4 }}
               />
             </TouchableOpacity>
