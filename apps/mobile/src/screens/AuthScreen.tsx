@@ -65,7 +65,7 @@ export default function AuthScreen() {
                 setIsRegister(false);
             } else {
                 await signInWithEmailAndPassword(auth, email, password);
-                navigation.navigate('Home');
+                navigation.navigate('GetInfo');
             }
         } catch (error: any) {
             console.log(error);

@@ -7,7 +7,7 @@ import HealthScreen from '../screens/HealthScreen';
 import IntroScreen from '../screens/IntroScreen';
 import TermsScreen from "../screens/TermsOfUseScreen";
 import PolicyScreen from "../screens/PrivacyPolicyScreen";
-
+import GetInfoScreen from '../screens/GetInfoScreen';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import BlogScreen from '../screens/BlogScreen';
@@ -30,6 +30,7 @@ export type RootStackParamList = {
   TestLottie: undefined;
   Terms: undefined;
   Policy: undefined;
+  GetInfo: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -53,7 +54,7 @@ export default function AppNavigator() {
           <Stack.Screen name="Auth" component={AuthScreen} />
           <Stack.Screen name="Terms" component={TermsScreen} />
           <Stack.Screen name="Policy" component={PolicyScreen} />
-
+          <Stack.Screen name="GetInfo" component={GetInfoScreen} />
           {/* 👇 Thay HomeScreen bằng MainTabNavigator */}
           <Stack.Screen name="Home" component={MainTabNavigator} />
           <Stack.Screen name="Camera" component={CameraScreen} />

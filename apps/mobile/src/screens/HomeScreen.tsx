@@ -1,26 +1,47 @@
-// src/screens/HomeScreen.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList,
+} from "react-native";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 export default function HomeScreen() {
   const [search, setSearch] = useState("");
   const [water, setWater] = useState(0);
-  const totalWater = 2364; // ml
+  const [date, setDate] = useState(new Date());
+  const [isPickerVisible, setPickerVisible] = useState(false);
+
+  const totalWater = 2364;
   const maxGlasses = 8;
 
-  const foods = [
-    { id: "1", name: "Cơm gà xối mỡ", kcal: 520 },
-    { id: "2", name: "Bún bò Huế", kcal: 430 },
-    { id: "3", name: "Salad ức gà", kcal: 270 },
-  ];
+  // 🧮 Dữ liệu user (có thể lấy từ profile hoặc firebase sau này)
+  const user = { gender: "male", weight: 60, height: 160, age: 20, goal: "maintain" };
 
-  const progress = 0; // phần trăm kcal nạp
-  const kcalNeed = 2635;
+  // 🔹 BMR (chuẩn Harris–Benedict)
+  const BMR =
+    user.gender === "male"
+      ? 66 + 13.7 * user.weight + 5 * user.height - 6.8 * user.age
+      : 655 + 9.6 * user.weight + 1.8 * user.height - 4.7 * user.age;
+
+  // 🔹 TDEE (vận động trung bình)
+  const kcalNeed = Math.round(BMR * 1.55);
+
   const kcalIn = 0;
-  const kcalOut = 1;
+  const kcalOut = 100;
+  const progress = Math.min((kcalIn / kcalNeed) * 100, 100);
+
+  // 🔹 Macro (tính theo phần trăm)
+  const carbs = Math.round((kcalNeed * 0.5) / 4);
+  const protein = Math.round((kcalNeed * 0.25) / 4);
+  const fat = Math.round((kcalNeed * 0.25) / 9);
+
+  const formatDate = (d: Date) => `${d.getDate()} thg ${d.getMonth() + 1}`;
+
+  const handleConfirm = (selectedDate: Date) => {
+    setPickerVisible(false);
+    setDate(selectedDate);
+  };
 
   return (
     <View style={styles.container}>
@@ -28,14 +49,28 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>Hôm nay</Text>
         <View style={styles.dateNav}>
-          <Ionicons name="chevron-back" size={20} color="#fff" />
-          <TouchableOpacity style={styles.dateButton}>
-            <Ionicons name="calendar-outline" size={20} color="#fff" />
-            <Text style={styles.dateText}>30 thg 10</Text>
+          <TouchableOpacity onPress={() => setDate(new Date(date.setDate(date.getDate() - 1)))}>
+            <Ionicons name="chevron-back" size={20} color="#fff" />
           </TouchableOpacity>
-          <Ionicons name="chevron-forward" size={20} color="#fff" />
+
+          <TouchableOpacity onPress={() => setPickerVisible(true)} style={styles.dateButton}>
+            <Ionicons name="calendar-outline" size={20} color="#fff" />
+            <Text style={styles.dateText}>{formatDate(date)}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setDate(new Date(date.setDate(date.getDate() + 1)))}>
+            <Ionicons name="chevron-forward" size={20} color="#fff" />
+          </TouchableOpacity>
         </View>
       </View>
+
+      {/* Date Picker */}
+      <DateTimePickerModal
+        isVisible={isPickerVisible}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={() => setPickerVisible(false)}
+      />
 
       {/* Search */}
       <View style={styles.searchContainer}>
@@ -65,7 +100,7 @@ export default function HomeScreen() {
             {() => (
               <View style={{ alignItems: "center" }}>
                 <Text style={styles.kcalValue}>{kcalNeed}</Text>
-                <Text style={styles.kcalSmall}>cần nạp</Text>
+                <Text style={styles.kcalSmall}>kcal cần/ngày</Text>
               </View>
             )}
           </AnimatedCircularProgress>
@@ -74,56 +109,40 @@ export default function HomeScreen() {
 
         {/* Macros */}
         <View style={styles.macros}>
-          <Text style={styles.macroText}>Carbs  0 / 231</Text>
-          <Text style={styles.macroText}>Chất đạm  0 / 231</Text>
-          <Text style={styles.macroText}>Chất béo  0 / 88</Text>
+          <Text style={styles.macroText}>Carbs {0} / {carbs}g</Text>
+          <Text style={styles.macroText}>Đạm {0} / {protein}g</Text>
+          <Text style={styles.macroText}>Béo {0} / {fat}g</Text>
         </View>
       </View>
 
-      {/* Water tracker */}
+      {/* Water */}
       <View style={styles.waterContainer}>
         <Text style={styles.waterTitle}>
-          Bạn đã uống bao nhiêu nước{" "}
-          <Text style={styles.waterGoal}>{water}/{totalWater} ml</Text>
+          Nước: <Text style={styles.waterGoal}>{water}/{totalWater} ml</Text>
         </Text>
-
         <View style={styles.glassesRow}>
           {Array.from({ length: maxGlasses }).map((_, i) => (
             <TouchableOpacity
               key={i}
-              onPress={() => setWater((prev) => Math.min(totalWater, prev + totalWater / maxGlasses))}
+              onPress={() => setWater(Math.min(totalWater, water + totalWater / maxGlasses))}
             >
               <MaterialCommunityIcons
                 name={i < water / (totalWater / maxGlasses) ? "cup" : "cup-outline"}
                 size={28}
-                color={i < water / (totalWater / maxGlasses) ? "#43b0e2ff" : "#555"}
+                color={i < water / (totalWater / maxGlasses) ? "#43b0e2" : "#555"}
                 style={{ marginHorizontal: 4 }}
               />
             </TouchableOpacity>
           ))}
         </View>
       </View>
-
-      {/* Floating Action Button */}
-      <TouchableOpacity style={styles.fab}>
-        <Ionicons name="add" size={28} color="#fff" />
-      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-    paddingTop: 60,
-    paddingHorizontal: 16,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+  container: { flex: 1, backgroundColor: "#000", paddingTop: 60, paddingHorizontal: 16 },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   title: { fontSize: 28, fontWeight: "700", color: "#fff" },
   dateNav: { flexDirection: "row", alignItems: "center" },
   dateButton: { flexDirection: "row", alignItems: "center", marginHorizontal: 6 },
@@ -153,16 +172,4 @@ const styles = StyleSheet.create({
   waterTitle: { color: "#fff", fontSize: 16, marginBottom: 10 },
   waterGoal: { color: "#6ee7b7", fontWeight: "600" },
   glassesRow: { flexDirection: "row", flexWrap: "wrap", alignItems: "center" },
-  fab: {
-    position: "absolute",
-    right: 20,
-    bottom: 30,
-    backgroundColor: "#28a745",
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-  },
 });
