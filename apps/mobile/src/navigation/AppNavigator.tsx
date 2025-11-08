@@ -14,7 +14,9 @@ import BlogScreen from '../screens/BlogScreen';
 import ScanScreen from '../screens/ScanScreen';
 import RecipesScreen from '../screens/RecipesScreen';
 import TestLottieScreen from "../screens/TestLottieScreen";
-import MainTabNavigator from './MainTabNavigator'; // 👈 thay vì HomeScreen
+import CreatePostScreen from '../screens/CreatePostScreen';
+import PostDetailScreen from '../screens/PostDetailScreen';
+import MainTabNavigator from './MainTabNavigator'; 
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -22,7 +24,7 @@ export type RootStackParamList = {
   Camera: undefined;
   Health: undefined;
   Intro: undefined;
-  Home: undefined;
+  Home: { userInfo: any }; // 👈 truyền userInfo từ GetInfoScreen
   Profile: undefined;
   Blog: undefined;
   Scan: undefined;
@@ -31,6 +33,8 @@ export type RootStackParamList = {
   Terms: undefined;
   Policy: undefined;
   GetInfo: undefined;
+  CreatePost: undefined;
+  PostDetail: { postId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -56,7 +60,9 @@ export default function AppNavigator() {
           <Stack.Screen name="Policy" component={PolicyScreen} />
           <Stack.Screen name="GetInfo" component={GetInfoScreen} />
           {/* 👇 Thay HomeScreen bằng MainTabNavigator */}
-          <Stack.Screen name="Home" component={MainTabNavigator} />
+          <Stack.Screen name="Home" component={MainTabNavigator} initialParams={{ userInfo: {} }} />
+          <Stack.Screen name="CreatePost" component={CreatePostScreen} />
+          <Stack.Screen name="PostDetail" component={PostDetailScreen} />
           <Stack.Screen name="Camera" component={CameraScreen} />
           <Stack.Screen name="Health" component={HealthScreen} />
         </>

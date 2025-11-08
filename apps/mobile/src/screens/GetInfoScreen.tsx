@@ -100,7 +100,7 @@ export default function GetInfoScreen({ navigation }: any) {
           />
 
           {/* --- ACTIVITY LEVEL --- */}
-          <SliderSection
+          {/* <SliderSection
             label="Mức độ vận động"
             unit={
               info.activityLevel === 1.2
@@ -115,7 +115,7 @@ export default function GetInfoScreen({ navigation }: any) {
             step={0.175}
             icon="walk-outline"
             onChange={(v) => handleChange("activityLevel", v)}
-          />
+          /> */}
 
           {/* --- WORKOUT MINUTES --- */}
           <SliderSection
@@ -245,13 +245,13 @@ const styles = StyleSheet.create({
   },
   genderBtn: {
     borderWidth: 1,
-    borderColor: "#10b981",
+    borderColor: "#43b0e2",
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 20,
   },
   genderActive: {
-    backgroundColor: "#10b981",
+    backgroundColor: "#43b0e2",
   },
   genderText: {
     color: "#111827",
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   sliderValue: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#059669",
+    color: "#43b0e2",
     alignSelf: "center",
     marginBottom: 6,
   },
