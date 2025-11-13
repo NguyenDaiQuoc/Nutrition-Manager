@@ -455,6 +455,44 @@ export default function CommunityFeed() {
           </TouchableOpacity>
           
 
+          {/* New Button for Options */}
+          <TouchableOpacity
+            style={[styles.optionBtn]} // Adjust position to the right of the close button
+            onPress={() => setActionSheetVisible(true)}
+          >
+            <Ionicons name="ellipsis-vertical" size={28} color="#fff" />
+          </TouchableOpacity>
+
+          {/* Action Sheet Modal */}
+          <Modal
+            visible={actionSheetVisible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => setActionSheetVisible(false)}
+          >
+            <TouchableWithoutFeedback onPress={() => setActionSheetVisible(false)}>
+              <View style={styles.menuOverlay}>
+                <View style={styles.menuContent}>
+                  <TouchableOpacity style={styles.menuItem} onPress={() => { /* Copy Image Logic */ }}>
+                    <Text style={styles.menuText}>Sao chép ảnh</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.menuItem} onPress={() => { /* Save Image Logic */ }}>
+                    <Text style={styles.menuText}>Lưu hình ảnh</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.menuItem} onPress={() => { /* Share Logic */ }}>
+                    <Text style={styles.menuText}>Chia sẻ</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.menuItem} onPress={() => { /* Report Logic */ }}>
+                    <Text style={styles.menuText}>Báo cáo</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.menuItem} onPress={() => setActionSheetVisible(false)}>
+                    <Text style={[styles.menuText, { color: "red" }]}>Huỷ</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+
           {/* Ảnh ở giữa - Draggable */}
           <Animated.View
             {...panResponder.panHandlers}
@@ -470,7 +508,9 @@ export default function CommunityFeed() {
               },
             ]}
           >
+            
             <Image source={{ uri: selectedPost?.image }} style={styles.modalImage} />
+            
           </Animated.View>
 
 
@@ -585,4 +625,10 @@ const styles = StyleSheet.create({
   modalActionText: { fontSize: 13, color: "#999", fontWeight: "500" },
   modalStats: { flexDirection: "row", justifyContent: "space-between", marginTop: 12, paddingTop: 12, borderTopWidth: 0.5 },
   modalStatsText: { fontSize: 13, color: "#999", fontWeight: "500" },
+  optionBtn: { position: "absolute", top: 60, zIndex: 10, padding: 8,right: 10 },
+  // Menu styles
+  menuOverlay: { flex: 1, backgroundColor: "rgba(0, 0, 0, 0.7)", justifyContent: "center", alignItems: "center" },
+  menuContent: { backgroundColor: "#232121ff", borderRadius: 12, padding: 20, width: "98%", elevation: 4,top: 225},
+  menuItem: { paddingVertical: 15, borderBottomWidth: 0.3, borderBottomColor: "#999", marginBottom: 10 },
+  menuText: { fontSize: 16, color: "#43b0e2", textAlign: "center" },
 });

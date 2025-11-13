@@ -54,11 +54,11 @@ export default function AppNavigator() {
       ) : (
         <>
           {/* <Stack.Screen name="TestLottie" component={TestLottieScreen} /> */}
-          <Stack.Screen name="Intro" component={IntroScreen} />
+          {/* <Stack.Screen name="Intro" component={IntroScreen} />
           <Stack.Screen name="Auth" component={AuthScreen} />
           <Stack.Screen name="Terms" component={TermsScreen} />
           <Stack.Screen name="Policy" component={PolicyScreen} />
-          <Stack.Screen name="GetInfo" component={GetInfoScreen} />
+          <Stack.Screen name="GetInfo" component={GetInfoScreen} /> */}
           {/* 👇 Thay HomeScreen bằng MainTabNavigator */}
           <Stack.Screen name="Home" component={MainTabNavigator} initialParams={{ userInfo: {} }} />
           <Stack.Screen name="CreatePost" component={CreatePostScreen} />
