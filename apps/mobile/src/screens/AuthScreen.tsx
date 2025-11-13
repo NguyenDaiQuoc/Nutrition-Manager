@@ -12,6 +12,9 @@ import {
     Alert,
     Animated,
     ImageBackground,
+    ScrollView,
+    TouchableWithoutFeedback,
+    Keyboard,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -76,163 +79,174 @@ export default function AuthScreen() {
     };
 
     const signInWithGoogle = async () => {
-        Alert.alert("Google Sign-In", "Cần tích hợp @react-native-google-signin/google-signin");
+        Alert.alert('Google Sign-In', 'Cần tích hợp @react-native-google-signin/google-signin');
     };
 
     const signInWithFacebook = async () => {
-        Alert.alert("Facebook Sign-In", "Cần tích hợp react-native-fbsdk-next");
+        Alert.alert('Facebook Sign-In', 'Cần tích hợp react-native-fbsdk-next');
     };
 
     const signInWithApple = async () => {
-        Alert.alert("Apple Sign-In", "Cần tích hợp expo-apple-authentication");
+        Alert.alert('Apple Sign-In', 'Cần tích hợp expo-apple-authentication');
     };
 
     const signInWithOTP = async () => {
-        Alert.alert("OTP / SMS", "Tính năng đăng nhập qua số điện thoại đang được phát triển.");
+        Alert.alert('OTP / SMS', 'Tính năng đăng nhập qua số điện thoại đang được phát triển.');
     };
 
     return (
-        <ImageBackground source={BACKGROUND_IMAGE} style={styles.imageBackground} resizeMode="cover">
-            <View style={styles.overlay} />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <ImageBackground source={BACKGROUND_IMAGE} style={styles.imageBackground} resizeMode="cover">
+                <View style={styles.overlay} />
 
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={styles.container}
-            >
-                <Animated.View style={[styles.card, { opacity: fadeAnim }]}>
-                    <Text style={styles.title}>{isRegister ? 'Tạo tài khoản' : 'Đăng nhập'}</Text>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={styles.flexContainer}
+                >
+                    <ScrollView
+                        style={styles.scrollContainer}
+                        contentContainerStyle={styles.scrollContent}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        <Animated.View style={[styles.card, { opacity: fadeAnim }]}>
+                            <Text style={styles.title}>{isRegister ? 'Tạo tài khoản' : 'Đăng nhập'}</Text>
 
-                    {/* Email Input */}
-                    <TextInput
-                        placeholder="Email"
-                        placeholderTextColor="#777"
-                        style={styles.input}
-                        onChangeText={setEmail}
-                        value={email}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                    />
+                            {/* Email */}
+                            <TextInput
+                                placeholder="Email"
+                                placeholderTextColor="#777"
+                                style={styles.input}
+                                onChangeText={setEmail}
+                                value={email}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                returnKeyType="next"
+                            />
 
-                    {/* Password Input */}
-                    <TextInput
-                        placeholder="Mật khẩu"
-                        placeholderTextColor="#777"
-                        secureTextEntry
-                        style={styles.input}
-                        onChangeText={setPassword}
-                        value={password}
-                    />
+                            {/* Password */}
+                            <TextInput
+                                placeholder="Mật khẩu"
+                                placeholderTextColor="#777"
+                                secureTextEntry
+                                style={styles.input}
+                                onChangeText={setPassword}
+                                value={password}
+                                returnKeyType="done"
+                            />
 
-                    {/* Checkbox khi đăng ký */}
-                    {isRegister && (
-                        <TouchableOpacity
-                            style={styles.checkboxContainer}
-                            onPress={() => setAgreeTerms(!agreeTerms)}
-                            activeOpacity={0.8}
-                        >
-                            <View style={[styles.checkbox, agreeTerms && styles.checkboxChecked]}>
-                                {agreeTerms && <Ionicons name="checkmark" size={16} color="#fff" />}
+                            {/* Checkbox */}
+                            {isRegister && (
+                                <TouchableOpacity
+                                    style={styles.checkboxContainer}
+                                    onPress={() => setAgreeTerms(!agreeTerms)}
+                                    activeOpacity={0.8}
+                                >
+                                    <View style={[styles.checkbox, agreeTerms && styles.checkboxChecked]}>
+                                        {agreeTerms && <Ionicons name="checkmark" size={16} color="#fff" />}
+                                    </View>
+                                    <Text style={styles.checkboxLabel}>
+                                        Tôi đồng ý với{' '}
+                                        <Text style={styles.linkText} onPress={() => navigation.navigate('Terms')}>
+                                            Điều khoản sử dụng
+                                        </Text>{' '}
+                                        và{' '}
+                                        <Text style={styles.linkText} onPress={() => navigation.navigate('Policy')}>
+                                            Chính sách bảo mật
+                                        </Text>
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+
+                            {/* Nút chính */}
+                            <TouchableOpacity
+                                style={[
+                                    styles.button,
+                                    loading && { opacity: 0.7 },
+                                    isRegister && !agreeTerms && { backgroundColor: '#777' },
+                                ]}
+                                onPress={handleAuth}
+                                disabled={loading || (isRegister && !agreeTerms)}
+                            >
+                                {loading ? (
+                                    <ActivityIndicator color="#fff" />
+                                ) : (
+                                    <Text style={styles.buttonText}>
+                                        {isRegister ? 'Đăng ký tài khoản' : 'Đăng nhập'}
+                                    </Text>
+                                )}
+                            </TouchableOpacity>
+
+                            {/* Switch */}
+                            <TouchableOpacity onPress={() => setIsRegister(!isRegister)} style={{ marginTop: 15 }}>
+                                <Text style={styles.switchText}>
+                                    {isRegister ? 'Đã có tài khoản? Đăng nhập' : 'Chưa có tài khoản? Đăng ký ngay'}
+                                </Text>
+                            </TouchableOpacity>
+
+                            {/* Separator */}
+                            <View style={styles.separatorContainer}>
+                                <View style={styles.line} />
+                                <Text style={styles.separatorText}>Hoặc</Text>
+                                <View style={styles.line} />
                             </View>
-                            <Text style={styles.checkboxLabel}>
-                                Tôi đồng ý với{' '}
+
+                            {/* Social */}
+                            <View style={styles.socialButtonsContainer}>
+                                <TouchableOpacity
+                                    style={[styles.socialButton, styles.googleButton]}
+                                    onPress={signInWithGoogle}
+                                >
+                                    <Ionicons name="logo-google" size={22} color="#fff" />
+                                    <Text style={styles.socialButtonText}>Google</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={[styles.socialButton, styles.facebookButton]}
+                                    onPress={signInWithFacebook}
+                                >
+                                    <FontAwesome name="facebook" size={22} color="#fff" />
+                                    <Text style={styles.socialButtonText}>Facebook</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={[styles.socialButton, styles.appleButton]}
+                                    onPress={signInWithApple}
+                                >
+                                    <AntDesign name="apple" size={22} color="#fff" />
+                                    <Text style={styles.socialButtonText}>Apple ID</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <TouchableOpacity onPress={signInWithOTP}>
+                                <Text style={styles.forgotPasswordText}>Đăng nhập bằng OTP / SMS</Text>
+                            </TouchableOpacity>
+
+                            <Text style={styles.bottomNote}>
+                                Bằng việc đăng nhập, bạn đã đồng ý với{' '}
                                 <Text style={styles.linkText} onPress={() => navigation.navigate('Terms')}>
                                     Điều khoản sử dụng
                                 </Text>{' '}
                                 và{' '}
                                 <Text style={styles.linkText} onPress={() => navigation.navigate('Policy')}>
                                     Chính sách bảo mật
-                                </Text>
+                                </Text>{' '}
+                                của chúng tôi.
                             </Text>
-                        </TouchableOpacity>
-                    )}
-
-                    {/* Nút chính */}
-                    <TouchableOpacity
-                        style={[
-                            styles.button,
-                            loading && { opacity: 0.7 },
-                            isRegister && !agreeTerms && { backgroundColor: '#777' },
-                        ]}
-                        onPress={handleAuth}
-                        disabled={loading || (isRegister && !agreeTerms)}
-                    >
-                        {loading ? (
-                            <ActivityIndicator color="#fff" />
-                        ) : (
-                            <Text style={styles.buttonText}>
-                                {isRegister ? 'Đăng ký tài khoản' : 'Đăng nhập'}
-                            </Text>
-                        )}
-                    </TouchableOpacity>
-
-                    {/* Chuyển đổi login/register */}
-                    <TouchableOpacity onPress={() => setIsRegister(!isRegister)} style={{ marginTop: 15 }}>
-                        <Text style={styles.switchText}>
-                            {isRegister ? 'Đã có tài khoản? Đăng nhập' : 'Chưa có tài khoản? Đăng ký ngay'}
-                        </Text>
-                    </TouchableOpacity>
-
-                    {/* Separator */}
-                    <View style={styles.separatorContainer}>
-                        <View style={styles.line} />
-                        <Text style={styles.separatorText}>Hoặc</Text>
-                        <View style={styles.line} />
-                    </View>
-
-                    {/* Social login buttons */}
-                    <View style={styles.socialButtonsContainer}>
-                        <TouchableOpacity
-                            style={[styles.socialButton, styles.googleButton]}
-                            onPress={signInWithGoogle}
-                        >
-                            <Ionicons name="logo-google" size={22} color="#fff" />
-                            <Text style={styles.socialButtonText}>Google</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={[styles.socialButton, styles.facebookButton]}
-                            onPress={signInWithFacebook}
-                        >
-                            <FontAwesome name="facebook" size={22} color="#fff" />
-                            <Text style={styles.socialButtonText}>Facebook</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={[styles.socialButton, styles.appleButton]}
-                            onPress={signInWithApple}
-                        >
-                            <AntDesign name="apple" size={22} color="#fff" />
-                            <Text style={styles.socialButtonText}>Apple ID</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* OTP / SMS login */}
-                    <TouchableOpacity onPress={signInWithOTP}>
-                        <Text style={styles.forgotPasswordText}>Đăng nhập bằng OTP / SMS</Text>
-                    </TouchableOpacity>
-
-                    {/* ✅ Dòng điều khoản luôn hiển thị */}
-                    <Text style={styles.bottomNote}>
-                        Bằng việc đăng nhập, bạn đã đồng ý với{' '}
-                        <Text style={styles.linkText} onPress={() => navigation.navigate('Terms')}>
-                            Điều khoản sử dụng
-                        </Text>{' '}
-                        và{' '}
-                        <Text style={styles.linkText} onPress={() => navigation.navigate('Policy')}>
-                            Chính sách bảo mật
-                        </Text>{' '}
-                        của chúng tôi.
-                    </Text>
-                </Animated.View>
-            </KeyboardAvoidingView>
-        </ImageBackground>
+                        </Animated.View>
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            </ImageBackground>
+        </TouchableWithoutFeedback>
     );
 }
 
 const styles = StyleSheet.create({
+    flexContainer: { flex: 1 },
+    scrollContainer: { flex: 1 },
+    scrollContent: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24 },
     imageBackground: { flex: 1, justifyContent: 'center' },
     overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-    container: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
     card: {
         backgroundColor: 'rgba(30, 30, 30, 0.9)',
         borderRadius: 20,
